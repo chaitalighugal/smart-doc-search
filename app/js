@@ -1,0 +1,42 @@
+import React, { useState } from 'react';
+import axios from 'axios';
+
+const API_BASE_URL = "https://your-api-gateway-url.amazonaws.com";
+
+function App() {
+    const [file, setFile] = useState(null);
+    const [query, setQuery] = useState("");
+    const [answer, setAnswer] = useState("");
+
+    const uploadFile = async () => {
+        let formData = new FormData();
+        formData.append("file", file);
+        await axios.post(`${API_BASE_URL}/upload`, formData);
+        alert("Upload Successful!");
+    };
+
+    const searchDocuments = async () => {
+        const response = await axios.get(`${API_BASE_URL}/search?q=${query}`);
+        console.log(response.data);
+    };
+
+    const getAnswer = async () => {
+        const response = await axios.get(`${API_BASE_URL}/answer/document1?q=${query}`);
+        setAnswer(response.data.answer);
+    };
+
+    return (
+        <div>
+            <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+            <button onClick={uploadFile}>Upload</button>
+
+            <input type="text" placeholder="Ask a question..." onChange={(e) => setQuery(e.target.value)} />
+            <button onClick={searchDocuments}>Search</button>
+            <button onClick={getAnswer}>Get Answer</button>
+
+            <p>{answer}</p>
+        </div>
+    );
+}
+
+export default App;
